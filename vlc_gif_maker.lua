@@ -135,7 +135,8 @@ function gui_create_main_dialog(command, output_path)
     resolution_input:add_value("Set height and width in pixels:", 5)]]
 
     -- middle 
-    dlg:add_button("Generate GIF", generate_gif, 3, 9, 3, 2)
+    dlg:add_button("Generate command", generate_command, 3, 9, 3, 2)
+    -- dlg:add_button("Generate GIF", generate_gif, 3, 9, 3, 2)
 end
 
 function fill_start_timestamp()
@@ -162,6 +163,48 @@ function generateCommand(command, generalOptions, commandBuilder)
     command = string_replace(command, '%5D', ']')
     vlc.msg.info(command)
     return command
+end
+
+function generate_command()
+    local start_timestamp = start_timestamp_input:get_text()
+    local stop_timestamp = stop_timestamp_input:get_text()
+    local command = command_input:get_text()
+    local fps = fps_input:get_text()
+
+    local item = vlc.input.item()
+    local uri = item:uri()
+    local media_path
+    if vlc.win then
+        media_path = string.gsub(uri, '^file:///', '') 
+    else 
+        media_path = string.gsub(uri, '^file://', '')
+    end
+    local output_path = output_path_input:get_text()
+    local output_filename = output_filename_input:get_text()
+
+    if output_filename == '' then
+        output_filename = 'g' .. os.time()
+    else
+        output_filename = output_filename:match('([^.]+)') -- remove extension
+    end
+    
+    save_config('command', command)
+    save_config('output_path', output_path)
+
+    local generalOptions = {}
+    generalOptions['{start_timestamp}'] = start_timestamp
+    generalOptions['{stop_timestamp}'] = stop_timestamp
+    generalOptions['{input_file}'] = media_path
+    generalOptions['{output_path}'] = output_path
+    generalOptions['{output_filename}'] = output_filename
+
+    local commandBuilder = {}
+    commandBuilder['{fps}'] = fps
+    commandBuilder['{loop}'] = looping_input:get_value()
+
+    command = generateCommand(command, generalOptions, commandBuilder)
+    
+    dlg:add_text_input(command, 1, 12, 8)
 end
 
 function generate_gif()

@@ -25,7 +25,7 @@ Adjust output path and filename as needed. **Do not put a slash at the end of th
 Now, you can either input start and end timestamps by hand, or you can simply navigate the player 
 and click "Get" by the inputs. The timestamps will be set automatically. 
 
-Press "Generate GIF" and it's gonna be saved to the path you specified, followed by a confirmation on the VLC screen. 
+Press "Generate Command" and it will generate the command you can run on the command line because running it from VLC doesn't always work on every platform/install.
 
 ## Adjusting resolution
 
